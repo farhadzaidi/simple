@@ -1,12 +1,40 @@
+from tokens import *
 import lexer
 import parser
 import interpreter
+
+# program breaks if two mult, div, or pow ops next to each other
+
+
+def verify(tokens):
+	i = 0
+	j = 1
+	NON_UNARY_OPS = (T_MULT, T_DIV, T_POW, T_INT_DIV, T_MOD)
+	while j < len(tokens):
+		if str(tokens[i].val) in DIGITS and str(tokens[j].val) in DIGITS:
+			return False
+
+		if tokens[i].t_type in NON_UNARY_OPS and tokens[j].t_type in NON_UNARY_OPS:
+			return False
+
+		i += 1
+		j += 1
+
+	OPERATORS = (T_PLUS, T_MINUS, T_MULT, T_DIV, T_POW, T_INT_DIV, T_MOD)
+	if tokens[-1].t_type in OPERATORS:
+		return False
+
+
+	return True
+
+
 
 def main():
 	print('Simple')
 	print("Input 'exit' to exit shell.")
 
 	while True:
+		# string = ''.join(input('>> ').split())
 		string = input('>> ').strip()
 		if string == '':
 			continue
@@ -15,17 +43,20 @@ def main():
 		else:
 			new_lexer = lexer.Lexer(string)
 			tokens = new_lexer.tokenize()
-
+			
 			if isinstance(tokens, list):
-				new_parser = parser.Parser(tokens)
-				ast = new_parser.parse()
+				verified = verify(tokens)
+				if not verified:
+					print('Syntax Error')
+				else:
+					new_parser = parser.Parser(tokens)
+					ast = new_parser.parse()
 
-				# print(ast)
-				new_interpreter = interpreter.Interpreter(ast)
-				print(new_interpreter.interpret())
+					new_interpreter = interpreter.Interpreter(ast)
+					result = new_interpreter.interpret()
 
-			else:
-				print(tokens)
+					if result:
+						print(result)
 
 
 if __name__ == '__main__':

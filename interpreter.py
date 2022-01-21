@@ -19,7 +19,31 @@ class Number:
 
 	def div(self, other):
 		if isinstance(other, Number):
-			return Number(self.val / other.val)
+			try:
+				return Number(self.val / other.val)
+			except ZeroDivisionError:
+				print('Division by Zero Error')
+				return None
+
+	def int_div(self, other):
+		if isinstance(other, Number):
+			try:
+				return Number(self.val // other.val)
+			except ZeroDivisionError:
+				print('Division by Zero Error')
+				return None
+
+	def mod(self, other):
+		if isinstance(other, Number):
+			try:
+				return Number(self.val % other.val)
+			except ZeroDivisionError:
+				print('Division by Zero Error')
+				return None
+
+	def pow(self, other):
+		if isinstance(other, Number):
+			return Number(self.val**other.val)
 
 	def __repr__(self):
 		return f'{self.val}'
@@ -59,6 +83,9 @@ class Interpreter:
 		self.node = right_node
 		right_num = self.interpret()
 
+		if not left_num or not right_num:
+			return None
+
 		if op_token_type == t.T_PLUS:
 			return left_num.plus(right_num)
 		elif op_token_type == t.T_MINUS:
@@ -67,4 +94,10 @@ class Interpreter:
 			return left_num.mult(right_num)
 		elif op_token_type == t.T_DIV:
 			return left_num.div(right_num)
+		elif op_token_type == t.T_INT_DIV:
+			return left_num.int_div(right_num)
+		elif op_token_type == t.T_MOD:
+			return left_num.mod(right_num)
+		elif op_token_type == t.T_POW:
+			return left_num.pow(right_num)
 

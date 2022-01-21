@@ -23,10 +23,14 @@ class Lexer:
 			num_str += self.current_char
 			self.advance()
 
-		if is_float:
-			return t.Token(t.T_FLOAT, float(num_str))
-		else:
-			return t.Token(t.T_INT, int(num_str))
+		try:
+			if is_float:
+				return t.Token(t.T_FLOAT, float(num_str))
+			else:
+				return t.Token(t.T_INT, int(num_str))
+		except ValueError:
+			print('Syntax Error')
+			return None
 
 	def tokenize(self):
 		token_list = []
@@ -46,7 +50,15 @@ class Lexer:
 				token_list.append(t.Token(t.T_MULT))
 				self.advance()
 			elif self.current_char == '/':
-				token_list.append(t.Token(t.T_DIV))
+				if self.string[self.index+1] == '/':
+					token_list.append(t.Token(t.T_INT_DIV))
+					self.advance()
+					self.advance()
+				else:
+					token_list.append(t.Token(t.T_DIV))
+					self.advance()
+			elif self.current_char == '%':
+				token_list.append(t.Token(t.T_MOD))
 				self.advance()
 			elif self.current_char == '^':
 				token_list.append(t.Token(t.T_POW))
@@ -58,6 +70,10 @@ class Lexer:
 				token_list.append(t.Token(t.T_RPAREN))
 				self.advance()
 			else:
-				return f"Invalid Character: '{self.current_char}'"
+				print(f"Invalid Character: '{self.current_char}'")
+				return None
+
+		if None in token_list:
+			return None
 
 		return token_list
