@@ -18,10 +18,18 @@ T_RPAREN = ')'
 T_KEYWORD = 'KEYWORD'
 T_IDENTIFIER = 'IDENITIFIER'
 T_EQ = 'EQ'
+T_EE = 'EE'
+T_NE = 'NE'
+T_GT = 'GT'
+T_LT = 'LT'
+T_GTE = 'GTE'
+T_LTE = 'LTE'
 
 KEYWORDS = [
 	'var',
-		
+	'and',
+	'or',
+	'not',
 ]
 
 class Token:

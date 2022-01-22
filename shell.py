@@ -1,7 +1,12 @@
+# 
+
+
+
 from tokens import *
 import lexer
 import parser
 import interpreter
+import number
 
 def verify(tokens):
 	i = 0
@@ -21,14 +26,17 @@ def verify(tokens):
 	if tokens[-1].t_type in OPERATORS:
 		return False
 
-
 	return True
 
 def main():
 	print('Simple')
 	print("Input 'exit' to exit shell.")
 
-	symbol_table = {}
+	symbol_table = {
+		'null': number.Number(0),
+		'false': number.Number(0),
+		'true': number.Number(1),
+	}
 	while True:
 		string = input('>> ').strip()
 		if string == '':

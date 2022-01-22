@@ -63,13 +63,17 @@ class Lexer:
 				token_list.append(t.Token(t.T_MULT))
 				self.advance()
 			elif self.current_char == '/':
-				if self.string[self.index+1] == '/':
-					token_list.append(t.Token(t.T_INT_DIV))
-					self.advance()
-					self.advance()
-				else:
-					token_list.append(t.Token(t.T_DIV))
-					self.advance()
+				try:
+					if self.string[self.index+1] == '/':
+						token_list.append(t.Token(t.T_INT_DIV))
+						self.advance()
+						self.advance()
+					else:
+						token_list.append(t.Token(t.T_DIV))
+						self.advance()
+				except IndexError:
+					print('Syntax Error')
+					return None
 			elif self.current_char == '%':
 				token_list.append(t.Token(t.T_MOD))
 				self.advance()
@@ -83,8 +87,50 @@ class Lexer:
 				token_list.append(t.Token(t.T_RPAREN))
 				self.advance()
 			elif self.current_char == '=':
-				token_list.append(t.Token(t.T_EQ))
-				self.advance()
+				try:
+					if self.string[self.index+1] == '=':
+						token_list.append(t.Token(t.T_EE))
+						self.advance()
+						self.advance()
+					else:
+						token_list.append(t.Token(t.T_EQ))
+						self.advance()
+				except IndexError:
+					print('Syntax Error')
+					return None
+			elif self.current_char == '!':
+				try:
+					if self.string[self.index+1] == '=':
+						token_list.append(t.Token(t.T_NE))
+						self.advance()
+						self.advance()
+				except IndexError:
+					print('Syntax Error')
+					return None
+			elif self.current_char == '>':
+				try:
+					if self.string[self.index+1] == '=':
+						token_list.append(t.Token(t.T_GTE))
+						self.advance()
+						self.advance()
+					else:
+						token_list.append(t.Token(t.T_GT))
+						self.advance()
+				except IndexError:
+					print('Syntax Error')
+					return None
+			elif self.current_char == '<':
+				try:
+					if self.string[self.index+1] == '=':
+						token_list.append(t.Token(t.T_LTE))
+						self.advance()
+						self.advance()
+					else:
+						token_list.append(t.Token(t.T_LT))
+						self.advance()
+				except IndexError:
+					print('Syntax Error')
+					return None
 			else:
 				print(f"Invalid Character: '{self.current_char}'")
 				return None

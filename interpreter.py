@@ -1,52 +1,6 @@
 import tokens as t
 import nodes as n
-
-class Number:
-	def __init__(self, val):
-		self.val = val
-
-	def plus(self, other):
-		if isinstance(other, Number):
-			return Number(self.val + other.val)
-
-	def minus(self, other):
-		if isinstance(other, Number):
-			return Number(self.val - other.val)
-
-	def mult(self, other):
-		if isinstance(other, Number):
-			return Number(self.val * other.val)
-
-	def div(self, other):
-		if isinstance(other, Number):
-			try:
-				return Number(self.val / other.val)
-			except ZeroDivisionError:
-				print('Division by Zero Error')
-				return None
-
-	def int_div(self, other):
-		if isinstance(other, Number):
-			try:
-				return Number(self.val // other.val)
-			except ZeroDivisionError:
-				print('Division by Zero Error')
-				return None
-
-	def mod(self, other):
-		if isinstance(other, Number):
-			try:
-				return Number(self.val % other.val)
-			except ZeroDivisionError:
-				print('Division by Zero Error')
-				return None
-
-	def pow(self, other):
-		if isinstance(other, Number):
-			return Number(self.val**other.val)
-
-	def __repr__(self):
-		return f'{self.val}'
+import number
 
 class Interpreter:
 	def __init__(self, node, symbol_table):
@@ -66,7 +20,7 @@ class Interpreter:
 			return self.interpret_VarAssignNode()
 
 	def interpret_NumNode(self):
-		return Number(self.node.node.val)
+		return number.Number(self.node.node.val)
 
 	def interpret_UnaryOpNode(self):
 		op_token = self.node.op
@@ -74,14 +28,21 @@ class Interpreter:
 		num = self.interpret()
 
 		if op_token.t_type == t.T_MINUS:
-			return num.mult(Number(-1))
+			return num.mult(number.Number(-1))
+		elif op_token.matches(t.Token(t.T_KEYWORD, 'not')):
+			if num:
+				return num.not_()
+			else:
+				print('Syntax Error')
+				return None
 
 		return num
 
 	def interpret_BinaryOpNode(self):
 		left_node = self.node.left_node
 		right_node = self.node.right_node
-		op_token_type = self.node.op.t_type
+		op_token = self.node.op
+		op_token_type = op_token.t_type
 
 		self.node = left_node
 		left_num = self.interpret()
@@ -105,6 +66,22 @@ class Interpreter:
 			return left_num.mod(right_num)
 		elif op_token_type == t.T_POW:
 			return left_num.pow(right_num)
+		elif op_token_type == t.T_EE:
+			return left_num.ee(right_num)
+		elif op_token_type == t.T_NE:
+			return left_num.ne(right_num)
+		elif op_token_type == t.T_GT:
+			return left_num.gt(right_num)
+		elif op_token_type == t.T_LT:
+			return left_num.lt(right_num)
+		elif op_token_type == t.T_GTE:
+			return left_num.gte(right_num)
+		elif op_token_type == t.T_LTE:
+			return left_num.lte(right_num)
+		elif op_token.matches(t.Token(t.T_KEYWORD, 'and')):
+			return left_num.and_(right_num)
+		elif op_token.matches(t.Token(t.T_KEYWORD, 'or')):
+			return left_num.or_(right_num)
 
 	def interpret_VarAccessNode(self):
 		var_name = self.node.id_token.val
