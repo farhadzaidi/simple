@@ -32,6 +32,17 @@ class Lexer:
 			print('Syntax Error')
 			return None
 
+	def tokenize_identifier_or_keyword(self):
+		id_str = ''
+		while self.current_char and self.current_char in t.LETTERS_DIGITS + '_':
+			id_str += self.current_char
+			self.advance()
+
+		if id_str in t.KEYWORDS:
+			return t.Token(t.T_KEYWORD, id_str)
+		else:
+			return t.Token(t.T_IDENTIFIER, id_str)
+
 	def tokenize(self):
 		token_list = []
 
@@ -40,6 +51,8 @@ class Lexer:
 				self.advance()
 			elif self.current_char in t.DIGITS:
 				token_list.append(self.tokenize_num())
+			elif self.current_char in t.LETTERS:
+				token_list.append(self.tokenize_identifier_or_keyword())
 			elif self.current_char == '+':
 				token_list.append(t.Token(t.T_PLUS))
 				self.advance()
@@ -68,6 +81,9 @@ class Lexer:
 				self.advance()
 			elif self.current_char == ')':
 				token_list.append(t.Token(t.T_RPAREN))
+				self.advance()
+			elif self.current_char == '=':
+				token_list.append(t.Token(t.T_EQ))
 				self.advance()
 			else:
 				print(f"Invalid Character: '{self.current_char}'")

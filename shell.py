@@ -3,9 +3,6 @@ import lexer
 import parser
 import interpreter
 
-# program breaks if two mult, div, or pow ops next to each other
-
-
 def verify(tokens):
 	i = 0
 	j = 1
@@ -27,14 +24,12 @@ def verify(tokens):
 
 	return True
 
-
-
 def main():
 	print('Simple')
 	print("Input 'exit' to exit shell.")
 
+	symbol_table = {}
 	while True:
-		# string = ''.join(input('>> ').split())
 		string = input('>> ').strip()
 		if string == '':
 			continue
@@ -51,8 +46,8 @@ def main():
 				else:
 					new_parser = parser.Parser(tokens)
 					ast = new_parser.parse()
-
-					new_interpreter = interpreter.Interpreter(ast)
+					
+					new_interpreter = interpreter.Interpreter(ast, symbol_table)
 					result = new_interpreter.interpret()
 
 					if result:

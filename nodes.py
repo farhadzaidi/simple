@@ -21,3 +21,18 @@ class BinaryOpNode:
 
 	def __repr__(self):
 		return f'({self.left_node}, {self.op}, {self.right_node})'
+
+class VarAccessNode:
+	def __init__(self, id_token):
+		self.id_token = id_token
+
+	def __repr__(self):
+		return f'{self.id_token}'
+
+class VarAssignNode:
+	def __init__(self, var_token, value_node):
+		self.var_token = var_token
+		self.value_node = value_node
+
+	def __repr__(self):
+		return f'({self.var_token}, {self.value_node.node})'

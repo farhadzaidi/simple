@@ -1,4 +1,8 @@
+from string import ascii_letters
+
 DIGITS = '0123456789.'
+LETTERS = ascii_letters
+LETTERS_DIGITS = LETTERS + DIGITS
 
 T_INT = 'INT'
 T_FLOAT = 'FLOAT'
@@ -11,11 +15,25 @@ T_MOD = 'MOD'
 T_POW = 'POW'
 T_LPAREN = '('
 T_RPAREN = ')'
+T_KEYWORD = 'KEYWORD'
+T_IDENTIFIER = 'IDENITIFIER'
+T_EQ = 'EQ'
+
+KEYWORDS = [
+	'var',
+		
+]
 
 class Token:
 	def __init__(self, t_type, val=None):
 		self.t_type = t_type
 		self.val = val
+
+	def matches(self, other):
+		if self.t_type == other.t_type and self.val == other.val:
+			return True
+
+		return False
 
 	def __repr__(self):
 		if self.val:

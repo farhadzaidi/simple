@@ -49,8 +49,9 @@ class Number:
 		return f'{self.val}'
 
 class Interpreter:
-	def __init__(self, node):
+	def __init__(self, node, symbol_table):
 		self.node = node
+		self.symbol_table = symbol_table
 
 	def interpret(self):
 		if isinstance(self.node, n.NumNode):
@@ -59,6 +60,10 @@ class Interpreter:
 			return self.interpret_UnaryOpNode()
 		elif isinstance(self.node, n.BinaryOpNode):
 			return self.interpret_BinaryOpNode()
+		elif isinstance(self.node, n.VarAccessNode):
+			return self.interpret_VarAccessNode()
+		elif isinstance(self.node, n.VarAssignNode):
+			return self.interpret_VarAssignNode()
 
 	def interpret_NumNode(self):
 		return Number(self.node.node.val)
@@ -100,4 +105,23 @@ class Interpreter:
 			return left_num.mod(right_num)
 		elif op_token_type == t.T_POW:
 			return left_num.pow(right_num)
+
+	def interpret_VarAccessNode(self):
+		var_name = self.node.id_token.val
+		try:
+			value = self.symbol_table[var_name]
+		except KeyError:
+			print(f"'{var_name}' is not defined.")
+			return None
+
+		return value
+
+	def interpret_VarAssignNode(self):
+		var_token = self.node.var_token
+		self.node = self.node.value_node
+		value_node = self.interpret()
+
+		if value_node:
+			self.symbol_table[var_token.val] = value_node
+
 

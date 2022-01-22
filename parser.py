@@ -23,6 +23,11 @@ class Parser:
 			self.advance()
 			return n.NumNode(token)
 
+		elif self.current_token.t_type == t.T_IDENTIFIER:
+			id_token = self.current_token
+			self.advance()
+			return n.VarAccessNode(id_token)
+
 		elif self.current_token.t_type == t.T_LPAREN:
 			self.advance()
 
@@ -72,8 +77,33 @@ class Parser:
 
 	# creates BinaryOpNode for 2 terms and plus/minus operator
 	def expression(self):
-		left_node = self.term()
+		if self.current_token.matches(t.Token(t.T_KEYWORD, 'var')):
+			self.advance()
 
+			if self.current_token and self.current_token.t_type != t.T_IDENTIFIER:
+				if self.current_token.val in t.KEYWORDS:
+					keyword = self.current_token.val
+					print(f"Syntax Error: cannot use keyword '{keyword}' as identifier")
+				else:
+					print('Syntax Error: expected identifier')
+				return None
+
+			var_token = self.current_token
+			self.advance()
+
+			if not self.current_token or self.current_token.t_type != t.T_EQ:
+				print("Syntax Error: expected '='")
+				return None
+
+			self.advance()
+			if self.current_token.val in t.KEYWORDS or self.current_token.t_type == t.T_EQ:
+				print('Syntax Error: invalid expression')
+				return None
+
+			expr = self.expression()
+			return n.VarAssignNode(var_token, expr)
+
+		left_node = self.term()
 		while self.current_token and self.current_token.t_type in (t.T_PLUS, t.T_MINUS):
 			op_token = self.current_token
 			self.advance()
